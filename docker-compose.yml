@@ -1,0 +1,39 @@
+version: "3.3"
+
+services: 
+    web:
+        build: 
+            context: .
+            dockerfile: build/web/dockerfile        
+        ports: 
+            - 8000:80
+        volumes:
+            - ./www:/var/www/html
+        depends_on: 
+            - db
+    db:
+        image: mysql:8.0
+        container_name: mysql8
+        command: --default-authentication-plugin=mysql_native_password
+        restart: always
+        environment: 
+            MYSQL_ROOT: root
+            MYSQL_ROOT_PASSWORD : root
+            MYSQL_DATABASE: development
+            MYSQL_USER: devuser
+            MYSQL_PASSWORD: devpassword
+        ports: 
+            - 3306:3306
+    phpmyadmin:
+        image: phpmyadmin/phpmyadmin
+        container_name: phpmyadmin
+        links:
+            - db
+        environment: 
+            MYSQL_ROOT: root
+            MYSQL_ROOT_PASSWORD : root
+            MYSQL_DATABASE: development
+            MYSQL_USER: devuser
+            MYSQL_PASSWORD: devpassword
+        ports:
+            - 8080:80
